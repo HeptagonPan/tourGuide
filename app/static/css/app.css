@@ -93,6 +93,53 @@ input:hover, select:hover { border-color: var(--jade); }
 .trip-summary dt { color: var(--muted); font-size: 13px; }
 .trip-summary dd { margin: 0; text-align: right; overflow-wrap: anywhere; }
 
+.text-link { color: var(--ink); font-size: 14px; text-underline-offset: 4px; }
+.result-banner { min-height: 270px; position: relative; display: flex; align-items: flex-end; padding: 44px 5vw; color: white; background: rgba(32, 37, 34, 0.5) url("/static/images/shanghai-riverside.webp") center 62% / cover no-repeat; background-blend-mode: multiply; }
+.result-banner__content { max-width: 900px; position: relative; }
+.result-banner .section-label { color: #dce4df; }
+.result-banner h1 { margin: 0 0 10px; font-family: var(--display); font-size: 38px; }
+.result-banner p:last-child { max-width: 720px; margin: 0; line-height: 1.7; }
+.overview-band { border-bottom: 1px solid var(--ink); background: var(--white); padding: 0 5vw; }
+.overview-band dl { max-width: 1240px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.overview-band dl > div { min-height: 84px; padding: 18px 24px; border-left: 1px solid var(--line); }
+.overview-band dl > div:last-child { border-right: 1px solid var(--line); }
+.overview-band dt { color: var(--muted); font-size: 12px; }
+.overview-band dd { margin: 7px 0 0; font-weight: 600; overflow-wrap: anywhere; }
+.itinerary-section, .result-detail { padding: 58px 5vw; border-bottom: 1px solid var(--ink); }
+.section-heading { max-width: 1240px; margin: 0 auto 30px; display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; }
+.section-heading h2 { margin: 0; font-family: var(--display); font-size: 26px; }
+.section-heading > p { margin: 0; color: var(--muted); font-size: 13px; }
+.day-tabs { display: flex; gap: 2px; overflow-x: auto; }
+.day-tabs button { min-width: 116px; min-height: 42px; padding: 8px 14px; border: 1px solid var(--line); border-radius: 0; background: transparent; color: var(--ink); white-space: nowrap; }
+.day-tabs button[aria-selected="true"] { background: var(--ink); border-color: var(--ink); color: white; }
+.itinerary-layout { max-width: 1240px; margin: 0 auto; display: grid; grid-template-columns: minmax(0, 1.75fr) minmax(280px, 0.75fr); gap: clamp(28px, 5vw, 72px); }
+.day-timeline { border-top: 1px solid var(--ink); }
+.timeline-item { min-height: 118px; padding: 22px 0; border-bottom: 1px solid var(--line); display: grid; grid-template-columns: 70px minmax(0, 1fr) 100px; gap: 18px; }
+.timeline-item h3 { margin: 0 0 7px; font-family: var(--display); font-size: 20px; }
+.timeline-item p { margin: 0; color: var(--muted); }
+.timeline-slot { font-family: var(--utility); font-size: 12px; color: var(--signal) !important; }
+.timeline-cost { text-align: right; color: var(--ink) !important; font-variant-numeric: tabular-nums; }
+.route-summary { padding: 24px 0 0; border-top: 3px solid var(--jade); }
+.route-summary h3 { margin: 0 0 18px; font-family: var(--display); font-size: 21px; }
+.route-summary ol { margin: 0; padding: 0; list-style: none; }
+.route-summary li { padding: 14px 0; border-bottom: 1px solid var(--line); display: grid; gap: 5px; }
+.route-summary li span, .source-note { color: var(--muted); font-size: 13px; }
+.transport-table, #accommodation-detail, #budget-detail, .source-list { max-width: 1240px; margin: 0 auto; }
+.transport-table > div { min-height: 62px; padding: 16px 0; border-top: 1px solid var(--line); display: grid; grid-template-columns: minmax(240px, 1fr) minmax(220px, 0.8fr) 160px; gap: 24px; }
+.transport-table > div:last-child { border-bottom: 1px solid var(--line); }
+.detail-lead { margin: 0 0 8px; font-family: var(--display); font-size: 24px; }
+#accommodation-detail p:last-child { margin: 0; color: var(--muted); }
+#budget-detail table { width: 100%; border-collapse: collapse; }
+#budget-detail th, #budget-detail td { padding: 12px 0; border-bottom: 1px solid var(--line); text-align: left; }
+#budget-detail td { text-align: right; font-family: var(--utility); }
+#budget-detail .budget-total th, #budget-detail .budget-total td { border-top: 2px solid var(--ink); font-weight: 700; }
+.source-note { max-width: 1240px; margin: 0 auto 18px; }
+.source-list { display: flex; flex-wrap: wrap; gap: 8px; }
+.source-list code { max-width: 100%; padding: 7px 9px; border: 1px solid var(--line); border-radius: 2px; background: var(--white); color: var(--ink); overflow-wrap: anywhere; }
+.result-actions { max-width: 1240px; margin: 0 auto; padding: 34px 5vw 60px; display: flex; align-items: center; gap: 14px; }
+.result-actions .button { display: inline-grid; place-items: center; text-decoration: none; }
+.result-actions .form-message { margin: 0 0 0 12px; }
+
 @media (max-width: 900px) {
   .planning-layout { grid-template-columns: minmax(0, 1fr); }
   .question-pane { border-right: 0; border-bottom: 1px solid var(--ink); }
@@ -100,6 +147,24 @@ input:hover, select:hover { border-color: var(--jade); }
   .summary-pane { display: grid; grid-template-columns: minmax(0, 1fr) minmax(280px, 0.8fr); gap: 30px; }
   .shanghai-figure { margin: 0; }
   .trip-summary { position: static; }
+}
+
+@media (max-width: 760px) {
+  .result-banner { min-height: 230px; padding: 32px 20px; }
+  .result-banner h1 { font-size: 30px; }
+  .overview-band { padding: 0 20px; }
+  .overview-band dl { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .overview-band dl > div:nth-child(odd) { border-left: 0; }
+  .overview-band dl > div:last-child { border-right: 0; }
+  .itinerary-section, .result-detail { padding: 42px 20px; }
+  .section-heading { display: block; }
+  .day-tabs { margin-top: 20px; }
+  .itinerary-layout { grid-template-columns: minmax(0, 1fr); }
+  .timeline-item { grid-template-columns: 56px minmax(0, 1fr); }
+  .timeline-cost { grid-column: 2; text-align: left; }
+  .transport-table > div { grid-template-columns: minmax(0, 1fr); gap: 6px; }
+  .result-actions { padding: 28px 20px 44px; flex-wrap: wrap; }
+  .result-actions .form-message { width: 100%; margin-left: 0; }
 }
 
 @media (max-width: 620px) {

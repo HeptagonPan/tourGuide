@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>tourGuide · 上海行程结果</title>
+    <link rel="stylesheet" href="/static/css/app.css">
+    <script id="plan-data" type="application/json">{{ plan_payload|tojson }}</script>
+    <script src="/static/js/result.js" defer></script>
+  </head>
+  <body class="result-page">
+    <header class="masthead">
+      <a class="brand" href="/" aria-label="返回 tourGuide 问卷">
+        <span>tourGuide</span>
+        <small>上海行程结果</small>
+      </a>
+      <a class="text-link" href="/">修改条件</a>
+    </header>
+
+    <main>
+      <header class="result-banner">
+        <div class="result-banner__content">
+          <p class="section-label">SHANGHAI ITINERARY</p>
+          <h1 id="result-title">上海行程</h1>
+          <p id="result-narrative">未找到行程，请返回问卷重新生成。</p>
+        </div>
+      </header>
+
+      <section class="overview-band" aria-label="行程概览">
+        <dl>
+          <div><dt>日期</dt><dd id="overview-dates">待生成</dd></div>
+          <div><dt>同行</dt><dd id="overview-travelers">待生成</dd></div>
+          <div><dt>预算</dt><dd id="overview-budget">待生成</dd></div>
+          <div><dt>住宿</dt><dd id="overview-hotel">待生成</dd></div>
+        </dl>
+      </section>
+
+      <section class="itinerary-section" aria-labelledby="itinerary-heading">
+        <header class="section-heading">
+          <div><p class="section-label">每日安排</p><h2 id="itinerary-heading">按日期查看</h2></div>
+          <div id="day-tabs" class="day-tabs" role="tablist" aria-label="行程日期"></div>
+        </header>
+        <div class="itinerary-layout">
+          <div id="day-timeline" class="day-timeline"></div>
+          <aside id="route-summary" class="route-summary" aria-label="当天路线"></aside>
+        </div>
+      </section>
+
+      <section class="result-detail" aria-labelledby="transport-heading">
+        <div class="section-heading"><div><p class="section-label">往返上海</p><h2 id="transport-heading">大交通比较</h2></div></div>
+        <div id="transport-options" class="transport-table"></div>
+      </section>
+
+      <section class="result-detail" aria-labelledby="accommodation-heading">
+        <div class="section-heading"><div><p class="section-label">入住参考</p><h2 id="accommodation-heading">住宿安排</h2></div></div>
+        <div id="accommodation-detail"></div>
+      </section>
+
+      <section class="result-detail budget-section" aria-labelledby="budget-heading">
+        <div class="section-heading"><div><p class="section-label">整数分计算</p><h2 id="budget-heading">预算明细</h2></div></div>
+        <div id="budget-detail"></div>
+      </section>
+
+      <section class="result-detail source-section" aria-labelledby="source-heading">
+        <div class="section-heading">
+          <div><p class="section-label">可追溯数据</p><h2 id="source-heading">参考价格</h2></div>
+          <p>数据更新时间：<time id="data-updated-at">待生成</time></p>
+        </div>
+        <p class="source-note">完整来源保存在行程数据中，页面仅展示用于核对的来源标识。</p>
+        <div id="source-list" class="source-list"></div>
+      </section>
+
+      <div class="result-actions">
+        <a class="button button--quiet" href="/">返回修改</a>
+        <button id="export-plan" class="button button--primary" type="button" disabled>导出 HTML</button>
+        <p id="result-message" class="form-message" aria-live="polite"></p>
+      </div>
+    </main>
+  </body>
+</html>

@@ -48,6 +48,22 @@ def register_routes(
     async def index(request: Request) -> Response:
         return templates.TemplateResponse(request=request, name="index.html")
 
+    @router.get("/result")
+    async def result_shell(request: Request) -> Response:
+        return templates.TemplateResponse(
+            request=request,
+            name="result.html",
+            context={"plan_payload": None},
+        )
+
+    @router.post("/result")
+    async def result_with_plan(request: Request, plan: TripPlan) -> Response:
+        return templates.TemplateResponse(
+            request=request,
+            name="result.html",
+            context={"plan_payload": plan.model_dump(mode="json")},
+        )
+
     @router.get("/api/options")
     async def options() -> dict[str, object]:
         return {
