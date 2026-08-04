@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>tourGuide · {{ plan.destination }}行程</title>
+    <style>
+      :root { color: #202522; background: #f4f3ef; font-family: system-ui, sans-serif; }
+      body { max-width: 960px; margin: 0 auto; padding: 32px 24px 64px; line-height: 1.65; }
+      header, section { border-top: 1px solid #62736a; padding: 20px 0; }
+      h1, h2, h3, p { margin-top: 0; }
+      h1 { font-size: 30px; }
+      h2 { font-size: 20px; }
+      .meta, .source { color: #5b625e; font-size: 14px; }
+      .timeline { display: grid; grid-template-columns: 64px 1fr auto; gap: 8px 16px; }
+      .amount { font-variant-numeric: tabular-nums; text-align: right; }
+      table { width: 100%; border-collapse: collapse; }
+      th, td { border-bottom: 1px solid #c8cec9; padding: 8px 0; text-align: left; }
+      @media (max-width: 640px) { .timeline { grid-template-columns: 56px 1fr; } .amount { text-align: left; } }
+    </style>
+  </head>
+  <body>
+    <header>
+      <p class="meta">tourGuide · 上海本地行程</p>
+      <h1>{{ plan.destination }} {{ plan.days|length }} 日安排</h1>
+      <p>{{ plan.narrative }}</p>
+      <p class="source">数据更新时间：{{ plan.data_updated_at }} · 页面金额为参考价格</p>
+    </header>
+
+    {% for day in plan.days %}
+    <section>
+      <h2>{{ day.date.strftime("%m月%d日") }}</h2>
+      <div class="timeline">
+        {% for activity in day.activities %}
+        <strong>{{ activity.slot }}</strong>
+        <div><h3>{{ activity.name }}</h3><p>{{ activity.region }} · 建议停留 {{ activity.duration_minutes }} 分钟</p></div>
+        <div class="amount">¥{{ "%.2f"|format(activity.cost_cents / 100) }}</div>
+        {% endfor %}
+      </div>
+      {% if day.routes %}
+      <h3>当日路线</h3>
+      {% for route in day.routes %}
+      <p>{{ route.origin_name }} → {{ route.destination_name }} · {{ route.duration_minutes }} 分钟 · {{ route.distance_meters }} 米</p>
+      {% endfor %}
+      {% endif %}
+    </section>
+    {% endfor %}
+
+    <section>
+      <h2>大交通与住宿</h2>
+      <p>{{ plan.selected_transport.name }}：¥{{ "%.2f"|format(plan.selected_transport.estimated_cents / 100) }}</p>
+      <p>{{ plan.accommodation.tier }}档 · {{ plan.accommodation.rooms }} 间 × {{ plan.accommodation.nights }} 晚：¥{{ "%.2f"|format(plan.accommodation.estimated_cents / 100) }}</p>
+    </section>
+
+    <section>
+      <h2>预算明细</h2>
+      <table>
+        <tbody>
+          {% for category, cents in plan.budget.categories.items() %}
+          <tr><th>{{ category }}</th><td class="amount">¥{{ "%.2f"|format(cents / 100) }}</td></tr>
+          {% endfor %}
+          <tr><th>预计总支出</th><td class="amount">¥{{ "%.2f"|format(plan.budget.total_cents / 100) }}</td></tr>
+          <tr><th>预算余额</th><td class="amount">¥{{ "%.2f"|format(plan.budget.remaining_cents / 100) }}</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="source">
+      <h2>参考价格与来源</h2>
+      <p>完整来源标识随行程保存：</p>
+      <p>{{ plan.source_ids|join(" · ") }}</p>
+    </section>
+  </body>
+</html>
