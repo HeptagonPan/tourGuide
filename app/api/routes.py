@@ -1,8 +1,9 @@
 from typing import Protocol
 from urllib.parse import quote
 
-from fastapi import APIRouter, FastAPI, HTTPException
-from fastapi.responses import HTMLResponse, Response
+from fastapi import APIRouter, FastAPI, HTTPException, Request
+from fastapi.responses import Response
+from fastapi.templating import Jinja2Templates
 
 from app.config import Settings
 from app.repositories.presets import PresetRepository
@@ -41,13 +42,11 @@ def register_routes(
     router = APIRouter()
     preset_repository = repository or PresetRepository()
     exporter = HtmlExporter()
+    templates = Jinja2Templates(directory=Settings().project_root / "app" / "templates")
 
-    @router.get("/", response_class=HTMLResponse)
-    async def index() -> str:
-        return (
-            "<!doctype html><html lang='zh-CN'><title>tourGuide</title>"
-            "<body>tourGuide</body></html>"
-        )
+    @router.get("/")
+    async def index(request: Request) -> Response:
+        return templates.TemplateResponse(request=request, name="index.html")
 
     @router.get("/api/options")
     async def options() -> dict[str, object]:

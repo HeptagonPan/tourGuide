@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>tourGuide · 上海行程规划</title>
+    <link rel="stylesheet" href="/static/css/app.css">
+    <script src="/static/js/questionnaire.js" defer></script>
+  </head>
+  <body class="questionnaire-page">
+    <header class="masthead">
+      <a class="brand" href="/" aria-label="tourGuide 首页">
+        <span>tourGuide</span>
+        <small>上海行程规划</small>
+      </a>
+      <p class="masthead-meta">31.2304° N / 121.4737° E</p>
+    </header>
+
+    <main class="planning-layout">
+      <section class="question-pane" aria-label="旅行问卷">
+        <div class="step-rail" aria-hidden="true">
+          <span>上海</span>
+          <strong id="step-number">01</strong>
+        </div>
+
+        <div class="question-workspace">
+          <header class="question-header">
+            <p class="section-label">行程条件 / 7 STEPS</p>
+            <div
+              id="question-progress"
+              class="progress-track"
+              role="progressbar"
+              aria-label="问卷进度"
+              aria-valuemin="1"
+              aria-valuemax="7"
+              aria-valuenow="1"
+            ><span></span></div>
+          </header>
+
+          <form id="questionnaire" novalidate>
+            <fieldset class="question-step" data-step="1">
+              <legend>从哪里出发？</legend>
+              <p class="question-note">第一版支持安徽主要城市与南京。</p>
+              <label for="origin-city">出发城市</label>
+              <select id="origin-city" name="origin_city" required>
+                <option value="">加载城市中</option>
+              </select>
+            </fieldset>
+
+            <fieldset class="question-step" data-step="2" hidden>
+              <legend>这次有几位同行？</legend>
+              <div class="field-grid field-grid--three">
+                <div>
+                  <label for="adults">成人</label>
+                  <input id="adults" name="adults" type="number" min="1" max="20" value="2" required>
+                </div>
+                <div>
+                  <label for="children">儿童</label>
+                  <input id="children" name="children" type="number" min="0" max="20" value="0" required>
+                </div>
+                <div>
+                  <label for="rooms">房间</label>
+                  <input id="rooms" name="rooms" type="number" min="1" placeholder="自动计算">
+                </div>
+              </div>
+              <label for="relationship">同行关系</label>
+              <select id="relationship" name="relationship" required>
+                <option value="couple">夫妻或伴侣</option>
+                <option value="family">家人</option>
+                <option value="friends">朋友</option>
+                <option value="colleagues">同事</option>
+                <option value="other">其他</option>
+              </select>
+            </fieldset>
+
+            <fieldset class="question-step" data-step="3" hidden>
+              <legend>哪几天在上海？</legend>
+              <div class="field-grid field-grid--two">
+                <div>
+                  <label for="start-date">出发日期</label>
+                  <input id="start-date" name="start_date" type="date" required>
+                </div>
+                <div>
+                  <label for="end-date">结束日期</label>
+                  <input id="end-date" name="end_date" type="date" required>
+                </div>
+              </div>
+            </fieldset>
+
+            <fieldset class="question-step" data-step="4" hidden>
+              <legend>总预算是多少？</legend>
+              <label for="budget-yuan">人民币预算</label>
+              <div class="money-input"><span>¥</span><input id="budget-yuan" name="budget_yuan" type="number" min="100" step="100" value="6000" required></div>
+              <label class="check-row" for="budget-includes-intercity">
+                <input id="budget-includes-intercity" name="budget_includes_intercity" type="checkbox" checked>
+                <span>预算包含往返大交通</span>
+              </label>
+            </fieldset>
+
+            <fieldset class="question-step" data-step="5" hidden>
+              <legend>更想把时间花在哪里？</legend>
+              <div id="interest-options" class="choice-grid" aria-label="旅行兴趣"></div>
+            </fieldset>
+
+            <fieldset class="question-step" data-step="6" hidden>
+              <legend>交通上更看重什么？</legend>
+              <div class="field-grid field-grid--two">
+                <div>
+                  <label for="intercity-preference">往返大交通</label>
+                  <select id="intercity-preference" name="intercity_preference">
+                    <option value="balanced">时间与价格平衡</option>
+                    <option value="rail">优先高铁</option>
+                    <option value="flight">优先航班</option>
+                    <option value="cheapest">优先低价</option>
+                    <option value="fastest">优先省时</option>
+                  </select>
+                </div>
+                <div>
+                  <label for="local-transport-preference">上海市内</label>
+                  <select id="local-transport-preference" name="local_transport_preference">
+                    <option value="balanced">综合平衡</option>
+                    <option value="metro">优先地铁</option>
+                    <option value="less_walking">减少步行</option>
+                    <option value="taxi">适当打车</option>
+                  </select>
+                </div>
+              </div>
+            </fieldset>
+
+            <fieldset class="question-step" data-step="7" hidden>
+              <legend>确认这份旅行条件</legend>
+              <p class="question-note">预算和路线由本地代码计算，生成后仍可返回调整。</p>
+              <dl id="confirmation-list" class="confirmation-list"></dl>
+            </fieldset>
+
+            <div id="form-error" class="form-message" aria-live="polite"></div>
+            <div class="question-actions">
+              <button id="previous-step" class="button button--quiet" type="button" disabled>返回</button>
+              <button id="next-step" class="button button--primary" type="button">下一步</button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <aside class="summary-pane" aria-labelledby="summary-title">
+        <!-- Photo: DvTor8303, CC0, https://commons.wikimedia.org/wiki/File:Pudong_Skyline_from_The_Bund_20260417.jpg -->
+        <figure class="shanghai-figure">
+          <img src="/static/images/shanghai-riverside.webp" alt="从外滩望向浦东陆家嘴天际线" width="1600" height="712">
+          <figcaption>上海 / 黄浦江两岸</figcaption>
+        </figure>
+        <div id="trip-summary" class="trip-summary">
+          <p class="section-label">已确认条件</p>
+          <h2 id="summary-title">你的上海行程</h2>
+          <dl>
+            <div><dt>出发</dt><dd data-summary="origin_city">待选择</dd></div>
+            <div><dt>同行</dt><dd data-summary="travelers">2 位</dd></div>
+            <div><dt>日期</dt><dd data-summary="dates">待选择</dd></div>
+            <div><dt>预算</dt><dd data-summary="budget">¥6,000</dd></div>
+            <div><dt>兴趣</dt><dd data-summary="interests">待选择</dd></div>
+            <div><dt>交通</dt><dd data-summary="transport">综合平衡</dd></div>
+          </dl>
+        </div>
+      </aside>
+    </main>
+  </body>
+</html>

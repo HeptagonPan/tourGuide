@@ -1,8 +1,10 @@
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
+from fastapi.staticfiles import StaticFiles
 
 from app.api.routes import NarratorService, PlannerService, register_routes
+from app.config import Settings
 from app.repositories.presets import PresetRepository
 
 
@@ -14,6 +16,8 @@ def create_app(
 ) -> FastAPI:
     """创建本地 Web 应用。"""
     app = FastAPI(title="tourGuide")
+    static_directory = Settings().project_root / "app" / "static"
+    app.mount("/static", StaticFiles(directory=static_directory), name="static")
 
     @app.get("/health")
     async def health() -> dict[str, str]:
