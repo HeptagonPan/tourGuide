@@ -23,10 +23,14 @@ dev = [
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 asyncio_mode = "auto"
+filterwarnings = [
+  "ignore:Using `httpx` with `starlette.testclient` is deprecated",
+]
 
 [tool.ruff]
 line-length = 100
 target-version = "py312"
+extend-exclude = ["docs/superpowers"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B", "SIM", "RUF"]
