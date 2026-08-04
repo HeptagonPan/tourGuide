@@ -47,6 +47,14 @@ class ReferenceCategory(StrEnum):
     FLIGHT = "flight"
 
 
+class TransportMode(StrEnum):
+    """大交通或接驳段的方式。"""
+
+    RAIL = "rail"
+    FLIGHT = "flight"
+    TRANSFER = "transfer"
+
+
 class TripRequest(BaseModel):
     """经过校验的七步问卷输入。"""
 
@@ -134,6 +142,87 @@ class ReferencePrice(BaseModel):
         if self.category is ReferenceCategory.RAIL and self.origin_city is None:
             raise ValueError("高铁参考价格必须包含出发城市")
         return self
+
+
+class AccommodationPlan(BaseModel):
+    """住宿房间和参考价格计算结果。"""
+
+    rooms: int = Field(ge=1)
+    nights: int = Field(ge=1)
+    tier: str
+    nightly_min_cents: int = Field(ge=0)
+    nightly_max_cents: int = Field(ge=0)
+    total_min_cents: int = Field(ge=0)
+    total_max_cents: int = Field(ge=0)
+    source_ids: list[str] = Field(min_length=1)
+
+    @property
+    def estimated_cents(self) -> int:
+        """返回住宿总区间的整数中点。"""
+        return (self.total_min_cents + self.total_max_cents) // 2
+
+
+class TransportLeg(BaseModel):
+    """一段带价格来源的城际交通。"""
+
+    origin: str
+    destination: str
+    mode: TransportMode
+    price_min_cents: int = Field(ge=0)
+    price_max_cents: int = Field(ge=0)
+    source_id: str = Field(min_length=1)
+
+    @model_validator(mode="after")
+    def validate_price_range(self) -> "TransportLeg":
+        if self.price_max_cents < self.price_min_cents:
+            raise ValueError("交通最高参考价格不能低于最低参考价格")
+        return self
+
+
+class TransportOption(BaseModel):
+    """由一段或多段交通组成的完整候选方案。"""
+
+    id: str
+    name: str
+    mode: TransportMode
+    legs: list[TransportLeg] = Field(min_length=1)
+    price_min_cents: int = Field(ge=0)
+    price_max_cents: int = Field(ge=0)
+    source_ids: list[str] = Field(min_length=1)
+
+    @classmethod
+    def from_legs(
+        cls,
+        *,
+        id: str,
+        name: str,
+        mode: TransportMode | str,
+        legs: list[TransportLeg],
+    ) -> "TransportOption":
+        """累加每一段的费用和来源，避免遗漏接驳成本。"""
+        return cls(
+            id=id,
+            name=name,
+            mode=mode,
+            legs=legs,
+            price_min_cents=sum(leg.price_min_cents for leg in legs),
+            price_max_cents=sum(leg.price_max_cents for leg in legs),
+            source_ids=list(dict.fromkeys(leg.source_id for leg in legs)),
+        )
+
+    @property
+    def estimated_cents(self) -> int:
+        """返回交通总区间的整数中点。"""
+        return (self.price_min_cents + self.price_max_cents) // 2
+
+
+class BudgetBreakdown(BaseModel):
+    """预算分类、余额和超支状态。"""
+
+    categories: dict[str, int]
+    total_cents: int
+    remaining_cents: int
+    is_over_budget: bool
 
 
 class SourceLink(BaseModel):
