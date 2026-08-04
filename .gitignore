@@ -4,14 +4,20 @@
 
 # 项目专属环境与私密配置
 .venv/
+.venv
 .env
 __pycache__/
 *.py[cod]
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
 
 # 本地运行产物
 cache/
 logs/
 exports/
+workflow.md
 
 # 本地模型文件
 *.gguf
