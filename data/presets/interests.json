@@ -1,0 +1,32 @@
+[
+  {
+    "id": "food",
+    "label": "美食文化",
+    "poi_categories": ["050000", "050100", "050200"]
+  },
+  {
+    "id": "nature",
+    "label": "自然风景",
+    "poi_categories": ["110000", "110100"]
+  },
+  {
+    "id": "culture",
+    "label": "城市人文",
+    "poi_categories": ["140000", "140100", "140200"]
+  },
+  {
+    "id": "family",
+    "label": "亲子活动",
+    "poi_categories": ["080000", "080500"]
+  },
+  {
+    "id": "shopping",
+    "label": "购物休闲",
+    "poi_categories": ["060000", "060100"]
+  },
+  {
+    "id": "night_view",
+    "label": "夜景摄影",
+    "poi_categories": ["110000", "140000"]
+  }
+]

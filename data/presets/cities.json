@@ -1,0 +1,62 @@
+[
+  {
+    "name": "合肥",
+    "province": "安徽",
+    "railway_stations": ["合肥南站", "合肥站"],
+    "nearby_airports": ["合肥新桥国际机场"]
+  },
+  {
+    "name": "芜湖",
+    "province": "安徽",
+    "railway_stations": ["芜湖站"],
+    "nearby_airports": ["芜湖宣州机场", "南京禄口国际机场"]
+  },
+  {
+    "name": "蚌埠",
+    "province": "安徽",
+    "railway_stations": ["蚌埠南站", "蚌埠站"],
+    "nearby_airports": ["合肥新桥国际机场", "南京禄口国际机场"]
+  },
+  {
+    "name": "淮南",
+    "province": "安徽",
+    "railway_stations": ["淮南南站", "淮南东站"],
+    "nearby_airports": ["合肥新桥国际机场"]
+  },
+  {
+    "name": "阜阳",
+    "province": "安徽",
+    "railway_stations": ["阜阳西站", "阜阳站"],
+    "nearby_airports": ["阜阳西关机场"]
+  },
+  {
+    "name": "安庆",
+    "province": "安徽",
+    "railway_stations": ["安庆站", "安庆西站"],
+    "nearby_airports": ["安庆天柱山机场"]
+  },
+  {
+    "name": "黄山",
+    "province": "安徽",
+    "railway_stations": ["黄山北站"],
+    "nearby_airports": ["黄山屯溪国际机场"]
+  },
+  {
+    "name": "马鞍山",
+    "province": "安徽",
+    "railway_stations": ["马鞍山东站", "马鞍山站"],
+    "nearby_airports": ["南京禄口国际机场"]
+  },
+  {
+    "name": "滁州",
+    "province": "安徽",
+    "railway_stations": ["滁州站", "滁州北站"],
+    "nearby_airports": ["南京禄口国际机场"]
+  },
+  {
+    "name": "南京",
+    "province": "江苏",
+    "railway_stations": ["南京南站", "南京站"],
+    "nearby_airports": ["南京禄口国际机场"]
+  }
+]
