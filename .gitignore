@@ -2,5 +2,22 @@
 .DS_Store
 ._*
 
+# 项目专属环境与私密配置
+.venv/
+.env
+__pycache__/
+*.py[cod]
+
+# 本地运行产物
+cache/
+logs/
+exports/
+
+# 本地模型文件
+*.gguf
+*.safetensors
+*.bin
+*.onnx
+
 # Local isolated worktrees
 .worktrees/
