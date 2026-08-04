@@ -1,0 +1,33 @@
+{
+  "status": "1",
+  "info": "OK",
+  "route": {
+    "transits": [
+      {
+        "cost": "4",
+        "duration": "1860",
+        "distance": "6200",
+        "segments": [
+          {
+            "walking": {
+              "distance": "320",
+              "duration": "260",
+              "steps": [{"instruction": "步行至南京东路站", "distance": "320"}]
+            },
+            "bus": {
+              "buslines": [
+                {
+                  "name": "地铁2号线",
+                  "departure_stop": {"name": "南京东路"},
+                  "arrival_stop": {"name": "陆家嘴"},
+                  "duration": "960",
+                  "distance": "4800"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
