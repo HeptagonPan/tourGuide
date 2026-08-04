@@ -38,6 +38,15 @@ class LocalTransportPreference(StrEnum):
     TAXI = "taxi"
 
 
+class ReferenceCategory(StrEnum):
+    """可维护的参考价格类别。"""
+
+    HOTEL = "hotel"
+    ATTRACTION = "attraction"
+    RAIL = "rail"
+    FLIGHT = "flight"
+
+
 class TripRequest(BaseModel):
     """经过校验的七步问卷输入。"""
 
@@ -97,6 +106,34 @@ class InterestPreset(BaseModel):
     id: str
     label: str
     poi_categories: list[str] = Field(min_length=1)
+
+
+class ReferencePrice(BaseModel):
+    """一条带采集时间和来源链接的参考价格。"""
+
+    id: str = Field(min_length=1)
+    category: ReferenceCategory
+    origin_city: str | None = None
+    destination_city: str
+    name: str = Field(min_length=1)
+    tier: str | None = None
+    price_min_cents: int = Field(ge=0)
+    price_max_cents: int = Field(ge=0)
+    source_url: HttpUrl
+    observed_at: date
+    valid_from: date
+    valid_to: date
+
+    @model_validator(mode="after")
+    def validate_price_range(self) -> "ReferencePrice":
+        """保证价格和适用日期区间有效。"""
+        if self.price_max_cents < self.price_min_cents:
+            raise ValueError("最高参考价格不能低于最低参考价格")
+        if self.valid_to < self.valid_from:
+            raise ValueError("参考价格适用结束日期不能早于开始日期")
+        if self.category is ReferenceCategory.RAIL and self.origin_city is None:
+            raise ValueError("高铁参考价格必须包含出发城市")
+        return self
 
 
 class SourceLink(BaseModel):

@@ -5,7 +5,7 @@ from typing import TypeVar
 from pydantic import BaseModel, TypeAdapter, ValidationError
 
 from app.config import Settings
-from app.schemas.trip import CityPreset, InterestPreset
+from app.schemas.trip import CityPreset, InterestPreset, ReferenceCategory, ReferencePrice
 
 PresetModel = TypeVar("PresetModel", bound=BaseModel)
 
@@ -27,6 +27,28 @@ class PresetRepository:
     def load_interests(self) -> list[InterestPreset]:
         """读取问卷兴趣选项。"""
         return self._load_models("presets/interests.json", InterestPreset)
+
+    def load_reference_prices(self) -> list[ReferencePrice]:
+        """读取价格记录，并拒绝会破坏来源追踪的重复 ID。"""
+        records = self._load_models("reference/prices.json", ReferencePrice)
+        record_ids = [record.id for record in records]
+        if len(record_ids) != len(set(record_ids)):
+            raise PresetDataError("参考价格存在重复 ID")
+        return records
+
+    def find_prices(
+        self,
+        category: ReferenceCategory | str,
+        origin_city: str | None = None,
+    ) -> list[ReferencePrice]:
+        """按类别和可选出发城市筛选参考价格。"""
+        normalized_category = ReferenceCategory(category)
+        return [
+            record
+            for record in self.load_reference_prices()
+            if record.category is normalized_category
+            and (origin_city is None or record.origin_city == origin_city)
+        ]
 
     def _load_models(
         self,
