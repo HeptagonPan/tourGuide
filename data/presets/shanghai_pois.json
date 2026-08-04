@@ -1,0 +1,110 @@
+[
+  {
+    "id": "shanghai-museum",
+    "name": "上海博物馆",
+    "region": "黄浦",
+    "interests": ["culture", "family"],
+    "suggested_duration_minutes": 150,
+    "admission_cents": 0,
+    "reference_price_id": null
+  },
+  {
+    "id": "the-bund",
+    "name": "外滩",
+    "region": "黄浦",
+    "interests": ["culture", "night_view"],
+    "suggested_duration_minutes": 90,
+    "admission_cents": 0,
+    "reference_price_id": null
+  },
+  {
+    "id": "nanjing-road",
+    "name": "南京路步行街",
+    "region": "黄浦",
+    "interests": ["food", "shopping", "night_view"],
+    "suggested_duration_minutes": 120,
+    "admission_cents": 0,
+    "reference_price_id": null
+  },
+  {
+    "id": "yuyuan-old-street",
+    "name": "豫园老街",
+    "region": "黄浦",
+    "interests": ["food", "culture", "shopping"],
+    "suggested_duration_minutes": 120,
+    "admission_cents": 0,
+    "reference_price_id": null
+  },
+  {
+    "id": "lujiazui-riverside",
+    "name": "陆家嘴滨江步道",
+    "region": "浦东",
+    "interests": ["nature", "night_view", "family"],
+    "suggested_duration_minutes": 90,
+    "admission_cents": 0,
+    "reference_price_id": null
+  },
+  {
+    "id": "century-park",
+    "name": "世纪公园",
+    "region": "浦东",
+    "interests": ["nature", "family"],
+    "suggested_duration_minutes": 150,
+    "admission_cents": 0,
+    "reference_price_id": null
+  },
+  {
+    "id": "four-row-warehouse",
+    "name": "四行仓库抗战纪念馆",
+    "region": "静安",
+    "interests": ["culture", "family"],
+    "suggested_duration_minutes": 120,
+    "admission_cents": 0,
+    "reference_price_id": null
+  },
+  {
+    "id": "suzhou-creek-walk",
+    "name": "苏州河步道",
+    "region": "静安",
+    "interests": ["nature", "culture", "night_view"],
+    "suggested_duration_minutes": 90,
+    "admission_cents": 0,
+    "reference_price_id": null
+  },
+  {
+    "id": "zhangyuan",
+    "name": "张园",
+    "region": "静安",
+    "interests": ["culture", "shopping", "food"],
+    "suggested_duration_minutes": 90,
+    "admission_cents": 0,
+    "reference_price_id": null
+  },
+  {
+    "id": "wukang-road",
+    "name": "武康路历史文化名街",
+    "region": "徐汇",
+    "interests": ["culture", "food"],
+    "suggested_duration_minutes": 120,
+    "admission_cents": 0,
+    "reference_price_id": null
+  },
+  {
+    "id": "xujiahui-library",
+    "name": "徐家汇书院",
+    "region": "徐汇",
+    "interests": ["culture", "family"],
+    "suggested_duration_minutes": 90,
+    "admission_cents": 0,
+    "reference_price_id": null
+  },
+  {
+    "id": "west-bund-riverside",
+    "name": "西岸滨江",
+    "region": "徐汇",
+    "interests": ["nature", "night_view", "family"],
+    "suggested_duration_minutes": 120,
+    "admission_cents": 0,
+    "reference_price_id": null
+  }
+]

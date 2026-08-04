@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, datetime
 from enum import StrEnum
 
 from pydantic import BaseModel, Field, HttpUrl, model_validator
@@ -116,6 +116,18 @@ class InterestPreset(BaseModel):
     poi_categories: list[str] = Field(min_length=1)
 
 
+class PoiPreset(BaseModel):
+    """用于高德核验的上海候选地点。"""
+
+    id: str = Field(min_length=1)
+    name: str = Field(min_length=1)
+    region: str = Field(min_length=1)
+    interests: list[str] = Field(min_length=1)
+    suggested_duration_minutes: int = Field(ge=30, le=360)
+    admission_cents: int = Field(default=0, ge=0)
+    reference_price_id: str | None = None
+
+
 class ReferencePrice(BaseModel):
     """一条带采集时间和来源链接的参考价格。"""
 
@@ -223,6 +235,63 @@ class BudgetBreakdown(BaseModel):
     total_cents: int
     remaining_cents: int
     is_over_budget: bool
+
+
+class ItineraryActivity(BaseModel):
+    """每日时间线中的一个已核验活动。"""
+
+    slot: str
+    name: str
+    region: str
+    longitude: float
+    latitude: float
+    duration_minutes: int = Field(ge=30)
+    cost_cents: int = Field(ge=0)
+    source_ids: list[str] = Field(min_length=1)
+
+
+class ItineraryRoute(BaseModel):
+    """相邻活动之间的高德路线摘要。"""
+
+    origin_name: str
+    destination_name: str
+    duration_minutes: int = Field(ge=0)
+    distance_meters: int = Field(ge=0)
+    cost_cents: int = Field(ge=0)
+    instructions: list[str] = Field(min_length=1)
+    queried_at: datetime
+    source_ids: list[str] = Field(min_length=1)
+
+
+class TripDay(BaseModel):
+    """上海行程中的单日安排。"""
+
+    date: date
+    activities: list[ItineraryActivity] = Field(min_length=1, max_length=4)
+    routes: list[ItineraryRoute]
+
+    @model_validator(mode="after")
+    def validate_route_count(self) -> "TripDay":
+        """保证每对相邻活动都有一条已核验路线。"""
+        expected_routes = max(0, len(self.activities) - 1)
+        if len(self.routes) != expected_routes:
+            raise ValueError("每日相邻活动必须包含已核验路线")
+        return self
+
+
+class TripPlan(BaseModel):
+    """API、页面和导出共同使用的完整行程结果。"""
+
+    destination: str = "上海"
+    request: TripRequest
+    transport_options: list[TransportOption] = Field(min_length=1)
+    selected_transport: TransportOption
+    accommodation: AccommodationPlan
+    budget: BudgetBreakdown
+    days: list[TripDay] = Field(min_length=1)
+    source_ids: list[str] = Field(min_length=1)
+    data_updated_at: date
+    narrative: str = ""
 
 
 class SourceLink(BaseModel):

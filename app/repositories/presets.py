@@ -5,7 +5,13 @@ from typing import TypeVar
 from pydantic import BaseModel, TypeAdapter, ValidationError
 
 from app.config import Settings
-from app.schemas.trip import CityPreset, InterestPreset, ReferenceCategory, ReferencePrice
+from app.schemas.trip import (
+    CityPreset,
+    InterestPreset,
+    PoiPreset,
+    ReferenceCategory,
+    ReferencePrice,
+)
 
 PresetModel = TypeVar("PresetModel", bound=BaseModel)
 
@@ -27,6 +33,10 @@ class PresetRepository:
     def load_interests(self) -> list[InterestPreset]:
         """读取问卷兴趣选项。"""
         return self._load_models("presets/interests.json", InterestPreset)
+
+    def load_shanghai_pois(self) -> list[PoiPreset]:
+        """读取等待高德核验的上海候选地点。"""
+        return self._load_models("presets/shanghai_pois.json", PoiPreset)
 
     def load_reference_prices(self) -> list[ReferencePrice]:
         """读取价格记录，并拒绝会破坏来源追踪的重复 ID。"""
