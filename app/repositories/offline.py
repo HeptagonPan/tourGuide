@@ -19,6 +19,7 @@ class OfflineRepository:
         self._database_path = database_path
 
     def list_pois(self, interests: Collection[str]) -> list[OfflinePoi]:
+        self._validate_schema_version()
         normalized_interests = sorted(set(interests))
         filter_sql = ""
         parameters: list[str] = []
@@ -52,6 +53,7 @@ class OfflineRepository:
         return [self._poi_from_row(row) for row in rows]
 
     def get_poi(self, poi_id: str) -> OfflinePoi:
+        self._validate_schema_version()
         rows = self._execute(
             """
             SELECT
@@ -71,6 +73,7 @@ class OfflineRepository:
         return self._poi_from_row(rows[0])
 
     def list_route_edges(self) -> list[OfflineRouteEdge]:
+        self._validate_schema_version()
         rows = self._execute(
             """
             SELECT
@@ -100,6 +103,11 @@ class OfflineRepository:
             )
         except (KeyError, ValueError) as error:
             raise OfflineDataError("离线数据元信息无效") from error
+
+    def _validate_schema_version(self) -> None:
+        rows = self._execute("SELECT value FROM metadata WHERE key = 'schema_version'")
+        if not rows or rows[0]["value"] != self._SCHEMA_VERSION:
+            raise OfflineDataError("不支持的离线数据版本")
 
     def _execute(self, query: str, parameters: Collection[str] = ()) -> list[sqlite3.Row]:
         with self._connection() as connection:
