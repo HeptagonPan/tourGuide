@@ -1,18 +1,29 @@
+from pathlib import Path
+
 import httpx
 import pytest
 
+from app.repositories.offline import OfflineRepository
 from app.repositories.presets import PresetRepository
 from app.services.narrator import Narrator
+from app.services.offline_routes import OfflineRouteService
 from app.services.planner import Planner
-from tests.test_planner import FakeAmapClient
+
+
+def make_planner() -> Planner:
+    """构造使用真实离线仓库和路线服务的规划器。"""
+    repository = OfflineRepository(Path(__file__).resolve().parents[1] / "data/offline/shanghai.db")
+    return Planner(
+        repository=PresetRepository(),
+        offline_repository=repository,
+        route_service=OfflineRouteService(repository),
+    )
 
 
 @pytest.mark.asyncio
 async def test_narrator_falls_back_without_changing_facts(request_factory) -> None:
     request = request_factory(start_date="2026-10-02", end_date="2026-10-02")
-    plan = await Planner(repository=PresetRepository(), amap_client=FakeAmapClient()).generate(
-        request
-    )
+    plan = await make_planner().generate(request)
 
     def fail_request(request: httpx.Request) -> httpx.Response:
         raise httpx.ConnectError("Ollama 未启动", request=request)
@@ -29,9 +40,7 @@ async def test_narrator_falls_back_without_changing_facts(request_factory) -> No
 @pytest.mark.asyncio
 async def test_narrator_uses_nonempty_local_model_response(request_factory) -> None:
     request = request_factory(start_date="2026-10-02", end_date="2026-10-02")
-    plan = await Planner(repository=PresetRepository(), amap_client=FakeAmapClient()).generate(
-        request
-    )
+    plan = await make_planner().generate(request)
 
     def respond(request: httpx.Request) -> httpx.Response:
         assert request.url.path == "/api/chat"
