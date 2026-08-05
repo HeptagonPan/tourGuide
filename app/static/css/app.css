@@ -119,11 +119,33 @@ input:hover, select:hover { border-color: var(--jade); }
 .timeline-item p { margin: 0; color: var(--muted); }
 .timeline-slot { font-family: var(--utility); font-size: 12px; color: var(--signal) !important; }
 .timeline-cost { text-align: right; color: var(--ink) !important; font-variant-numeric: tabular-nums; }
-.route-summary { padding: 24px 0 0; border-top: 3px solid var(--jade); }
+.route-summary { min-width: 0; padding: 24px 0 0; border-top: 3px solid var(--jade); }
 .route-summary h3 { margin: 0 0 18px; font-family: var(--display); font-size: 21px; }
 .route-summary ol { margin: 0; padding: 0; list-style: none; }
 .route-summary li { padding: 14px 0; border-bottom: 1px solid var(--line); display: grid; gap: 5px; }
 .route-summary li span, .source-note { color: var(--muted); font-size: 13px; }
+.route-diagram {
+  min-width: 0;
+  margin-top: 18px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  aspect-ratio: 4 / 3;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto auto;
+  gap: 8px;
+  background:
+    linear-gradient(rgba(31, 107, 87, 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(31, 107, 87, 0.07) 1px, transparent 1px),
+    var(--white);
+  background-size: 22px 22px, 22px 22px, auto;
+}
+.route-diagram svg { width: 100%; height: 100%; min-width: 0; min-height: 0; display: block; }
+.route-polyline { fill: none; stroke: var(--jade); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.route-stop { fill: var(--jade); }
+.route-stop-number { fill: var(--signal); font-family: var(--utility); font-size: 7px; font-weight: 700; }
+.route-detail { font-size: 13px; line-height: 1.6; color: var(--ink); overflow-wrap: anywhere; }
+.route-diagram-note { margin: 0; font-family: var(--utility); font-size: 12px; color: var(--muted); }
 .transport-table, #accommodation-detail, #budget-detail, .source-list { max-width: 1240px; margin: 0 auto; }
 .transport-table > div { min-height: 62px; padding: 16px 0; border-top: 1px solid var(--line); display: grid; grid-template-columns: minmax(240px, 1fr) minmax(220px, 0.8fr) 160px; gap: 24px; }
 .transport-table > div:last-child { border-bottom: 1px solid var(--line); }
@@ -162,6 +184,7 @@ input:hover, select:hover { border-color: var(--jade); }
   .itinerary-layout { grid-template-columns: minmax(0, 1fr); }
   .timeline-item { grid-template-columns: 56px minmax(0, 1fr); }
   .timeline-cost { grid-column: 2; text-align: left; }
+  .route-diagram { min-height: 300px; max-width: 100%; overflow: hidden; }
   .transport-table > div { grid-template-columns: minmax(0, 1fr); gap: 6px; }
   .result-actions { padding: 28px 20px 44px; flex-wrap: wrap; }
   .result-actions .form-message { width: 100%; margin-left: 0; }

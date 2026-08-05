@@ -28,6 +28,85 @@ function escapeHtml(value) {
     .replaceAll("'", "&#039;");
 }
 
+function renderRouteDiagram(day) {
+  const container = document.querySelector("#route-summary");
+  const previous = container.querySelector("#route-diagram");
+  if (previous) previous.remove();
+
+  const diagram = document.createElement("section");
+  diagram.id = "route-diagram";
+  diagram.className = "route-diagram";
+  diagram.setAttribute("aria-label", "离线路线示意");
+
+  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  svg.setAttribute("viewBox", "0 0 100 100");
+  svg.setAttribute("preserveAspectRatio", "xMidYMid meet");
+  svg.setAttribute("role", "img");
+  svg.setAttribute("aria-label", "当日景点访问顺序示意");
+
+  const longitudes = day.activities.map((activity) => activity.longitude);
+  const latitudes = day.activities.map((activity) => activity.latitude);
+  const minLongitude = Math.min(...longitudes);
+  const maxLongitude = Math.max(...longitudes);
+  const minLatitude = Math.min(...latitudes);
+  const maxLatitude = Math.max(...latitudes);
+  const longitudeSpan = maxLongitude - minLongitude || 1;
+  const latitudeSpan = maxLatitude - minLatitude || 1;
+  const padding = 8;
+  const usable = 100 - padding * 2;
+
+  const points = day.activities.map((activity) => ({
+    x: padding + ((activity.longitude - minLongitude) / longitudeSpan) * usable,
+    y: padding + ((maxLatitude - activity.latitude) / latitudeSpan) * usable,
+  }));
+
+  if (points.length > 1) {
+    const polyline = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
+    polyline.setAttribute("class", "route-polyline");
+    polyline.setAttribute("points", points.map((point) => `${point.x},${point.y}`).join(" "));
+    svg.appendChild(polyline);
+  }
+
+  points.forEach((point, index) => {
+    const stop = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+    stop.setAttribute("class", "route-stop");
+    stop.setAttribute("cx", String(point.x));
+    stop.setAttribute("cy", String(point.y));
+    stop.setAttribute("r", "2.4");
+    svg.appendChild(stop);
+
+    const number = document.createElementNS("http://www.w3.org/2000/svg", "text");
+    number.setAttribute("class", "route-stop-number");
+    number.setAttribute("x", String(point.x));
+    number.setAttribute("y", String(point.y - 4.5));
+    number.setAttribute("text-anchor", "middle");
+    number.textContent = String(index + 1);
+    svg.appendChild(number);
+  });
+
+  diagram.appendChild(svg);
+
+  const detail = document.createElement("div");
+  detail.className = "route-detail";
+  const routeText = day.routes
+    .map((route) => {
+      const distance = route.distance_meters >= 1000
+        ? `${(route.distance_meters / 1000).toFixed(1)} 公里`
+        : `${route.distance_meters} 米`;
+      return `${route.origin_name} → ${route.destination_name}：${route.duration_minutes} 分钟 · 约 ${distance} · ${route.instructions.join("；")}`;
+    })
+    .join("；");
+  detail.textContent = routeText || "当日无需地点间路线";
+  diagram.appendChild(detail);
+
+  const note = document.createElement("p");
+  note.className = "route-diagram-note";
+  note.textContent = "离线路线示意 · 时间与距离为实用级估算";
+  diagram.appendChild(note);
+
+  container.appendChild(diagram);
+}
+
 function renderDay(dayIndex) {
   const day = plan.days[dayIndex];
   document.querySelectorAll("[data-day-index]").forEach((button) => {
@@ -55,7 +134,8 @@ function renderDay(dayIndex) {
     <p class="section-label">${formatDate(day.date)}</p>
     <h3>当天路线</h3>
     <ol>${routes}</ol>
-    <p class="source-note">路线来源：高德 Web 服务</p>`;
+  `;
+  renderRouteDiagram(day);
 }
 
 function renderPlan() {
