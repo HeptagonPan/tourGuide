@@ -10,7 +10,7 @@ from app.services.offline_routes import OfflineRouteService
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 DATABASE_PATH = PROJECT_ROOT / "data/offline/shanghai.db"
 
-DIRECTIONAL_BOARDING_PATTERN = re.compile(r"(?:乘|乘坐).*?(?:至|前往)")
+DIRECTIONAL_SUMMARY_PATTERN = re.compile(r"至|前往|方向|向南")
 
 
 class FakeOfflineRepository:
@@ -233,12 +233,8 @@ def test_bidirectional_route_summaries_are_direction_neutral() -> None:
     for edge in repository.list_route_edges():
         if not edge.is_bidirectional:
             continue
-        assert not DIRECTIONAL_BOARDING_PATTERN.search(edge.summary)
-        assert "前往" not in edge.summary
-        assert not re.search(r"经.*?(?:至|前往)", edge.summary)
+        assert not DIRECTIONAL_SUMMARY_PATTERN.search(edge.summary)
         reverse = service.find_route(edge.destination_poi_id, edge.origin_poi_id)
         assert reverse is not None
         for instruction in reverse.instructions:
-            assert not DIRECTIONAL_BOARDING_PATTERN.search(instruction)
-            assert "前往" not in instruction
-            assert not re.search(r"经.*?(?:至|前往)", instruction)
+            assert not DIRECTIONAL_SUMMARY_PATTERN.search(instruction)
