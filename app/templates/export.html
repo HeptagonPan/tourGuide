@@ -38,7 +38,7 @@
         {% endfor %}
       </div>
       {% if day.routes %}
-      <h3>当日路线</h3>
+      <h3>离线路线参考</h3>
       {% for route in day.routes %}
       <p>{{ route.origin_name }} → {{ route.destination_name }} · {{ route.duration_minutes }} 分钟 · {{ route.distance_meters }} 米</p>
       {% endfor %}
@@ -70,5 +70,9 @@
       <p>完整来源标识随行程保存：</p>
       <p>{{ plan.source_ids|join(" · ") }}</p>
     </section>
+
+    <footer>
+      <p class="source">景点和路线来自项目内置数据库，预计时间与距离不代表实时导航。</p>
+    </footer>
   </body>
 </html>
