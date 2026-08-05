@@ -37,3 +37,10 @@ def test_result_css_keeps_route_diagram_stable_on_mobile() -> None:
 
     assert ".route-diagram" in mobile_block
     assert "min-height" in mobile_block
+
+
+def test_result_js_centers_zero_span_axis() -> None:
+    source = RESULT_JS_PATH.read_text(encoding="utf-8")
+
+    assert "usable / 2" in source
+    assert "=== 0" in source

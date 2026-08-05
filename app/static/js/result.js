@@ -50,14 +50,19 @@ function renderRouteDiagram(day) {
   const maxLongitude = Math.max(...longitudes);
   const minLatitude = Math.min(...latitudes);
   const maxLatitude = Math.max(...latitudes);
-  const longitudeSpan = maxLongitude - minLongitude || 1;
-  const latitudeSpan = maxLatitude - minLatitude || 1;
+  const longitudeSpan = maxLongitude - minLongitude;
+  const latitudeSpan = maxLatitude - minLatitude;
   const padding = 8;
   const usable = 100 - padding * 2;
+  const centered = padding + usable / 2;
 
   const points = day.activities.map((activity) => ({
-    x: padding + ((activity.longitude - minLongitude) / longitudeSpan) * usable,
-    y: padding + ((maxLatitude - activity.latitude) / latitudeSpan) * usable,
+    x: longitudeSpan === 0
+      ? centered
+      : padding + ((activity.longitude - minLongitude) / longitudeSpan) * usable,
+    y: latitudeSpan === 0
+      ? centered
+      : padding + ((maxLatitude - activity.latitude) / latitudeSpan) * usable,
   }));
 
   if (points.length > 1) {
