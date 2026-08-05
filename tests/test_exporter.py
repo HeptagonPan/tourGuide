@@ -11,6 +11,8 @@ def test_exporter_creates_self_contained_html(sample_plan) -> None:
     assert "1960.20" in html
     assert "上海博物馆" in html
     assert "参考价格" in html
+    assert "离线路线参考" in html
+    assert "景点和路线来自项目内置数据库，预计时间与距离不代表实时导航。" in html
     assert "localhost" not in html
     assert "AMAP_WEB_KEY" not in html
 

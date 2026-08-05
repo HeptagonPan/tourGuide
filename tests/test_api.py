@@ -2,8 +2,10 @@ import httpx
 from fastapi.testclient import TestClient
 
 from app.main import create_app
+from app.repositories.offline import OfflineDataError
 from app.repositories.presets import PresetRepository
 from app.schemas.trip import TripRequest
+from app.services.planner import Planner
 
 
 def test_create_plan_returns_grounded_plan(client, valid_request_data) -> None:
@@ -50,6 +52,41 @@ def test_external_failure_returns_sanitized_503(valid_request_data) -> None:
     assert response.json() == {"detail": "规划服务暂时不可用，请稍后重试"}
     assert "secret-value" not in response.text
     assert "RuntimeError" not in response.text
+
+
+def test_offline_data_error_returns_rebuild_hint(valid_request_data) -> None:
+    class CorruptOfflineRepository:
+        def list_pois(self, interests):
+            del interests
+            raise OfflineDataError("不支持的离线数据版本")
+
+        def list_route_edges(self) -> list:
+            return []
+
+        def get_metadata(self):
+            raise OfflineDataError("不支持的离线数据版本")
+
+    class NoOpRouteService:
+        def find_route(self, origin_poi_id: str, destination_poi_id: str) -> None:
+            del origin_poi_id, destination_poi_id
+            return None
+
+    planner = Planner(
+        repository=PresetRepository(),
+        offline_repository=CorruptOfflineRepository(),
+        route_service=NoOpRouteService(),
+    )
+    client = TestClient(create_app(planner=planner, repository=PresetRepository()))
+
+    response = client.post("/api/plans", json=valid_request_data)
+
+    assert response.status_code == 503
+    assert response.json() == {
+        "detail": "离线数据库缺失或版本不兼容，请运行 scripts/build_offline_db.py 重建"
+    }
+    assert "不支持的离线数据版本" not in response.text
+    assert "shanghai.db" not in response.text
+    assert "SELECT" not in response.text
 
 
 def test_default_api_uses_offline_data_without_amap_key_or_network(

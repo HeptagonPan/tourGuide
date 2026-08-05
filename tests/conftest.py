@@ -11,6 +11,7 @@ from app.schemas.trip import (
     AccommodationPlan,
     BudgetBreakdown,
     ItineraryActivity,
+    ItineraryRoute,
     TransportLeg,
     TransportOption,
     TripDay,
@@ -112,9 +113,33 @@ def sample_plan(request_factory: Callable[..., TripRequest]) -> TripPlan:
                 duration_minutes=150,
                 cost_cents=0,
                 source_ids=["amap-poi:B001"],
+            ),
+            ItineraryActivity(
+                slot="下午",
+                name="外滩",
+                region="黄浦",
+                longitude=121.4901,
+                latitude=31.2415,
+                duration_minutes=90,
+                cost_cents=0,
+                source_ids=["amap-poi:B003"],
+            ),
+        ],
+        routes=[
+            ItineraryRoute(
+                origin_name="上海博物馆",
+                destination_name="外滩",
+                duration_minutes=18,
+                distance_meters=2200,
+                cost_cents=300,
+                instructions=["地铁2号线连接人民广场站与南京东路站，出站后步行"],
+                queried_at="2026-08-05T00:00:00Z",
+                source_ids=[
+                    "offline-route:shanghai-museum-peoples-square:the-bund",
+                    "shanghai-metro",
+                ],
             )
         ],
-        routes=[],
     )
     return TripPlan(
         request=request,
@@ -127,6 +152,7 @@ def sample_plan(request_factory: Callable[..., TripRequest]) -> TripPlan:
             "rail-hefei-shanghai-20260805",
             "hotel-shanghai-comfort-20260804",
             "amap-poi:B001",
+            "offline-route:shanghai-museum-peoples-square:the-bund",
         ],
         data_updated_at="2026-08-04",
         narrative="一天内从人民广场开始，节奏从容。",

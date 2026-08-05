@@ -1,3 +1,4 @@
+import logging
 from typing import Protocol
 from urllib.parse import quote
 
@@ -6,7 +7,7 @@ from fastapi.responses import Response
 from fastapi.templating import Jinja2Templates
 
 from app.config import Settings
-from app.repositories.offline import OfflineRepository
+from app.repositories.offline import OfflineDataError, OfflineRepository
 from app.repositories.presets import PresetRepository
 from app.schemas.trip import (
     IntercityPreference,
@@ -18,6 +19,8 @@ from app.services.exporter import HtmlExporter
 from app.services.narrator import Narrator
 from app.services.offline_routes import OfflineRouteService
 from app.services.planner import Planner
+
+logger = logging.getLogger(__name__)
 
 
 class PlannerService(Protocol):
@@ -97,6 +100,12 @@ def register_routes(
                 active_narrator = local_narrator
             narrative = await active_narrator.describe(plan)
             return plan.model_copy(update={"narrative": narrative})
+        except OfflineDataError as exc:
+            logger.exception("离线数据库不可用")
+            raise HTTPException(
+                status_code=503,
+                detail="离线数据库缺失或版本不兼容，请运行 scripts/build_offline_db.py 重建",
+            ) from exc
         except Exception as exc:
             raise HTTPException(
                 status_code=503,

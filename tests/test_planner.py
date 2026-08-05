@@ -1,4 +1,4 @@
-from datetime import UTC
+from datetime import UTC, date
 from pathlib import Path
 
 import pytest
@@ -221,3 +221,38 @@ async def test_planner_fills_gaps_with_same_area_general_highlights(request_fact
                 poi.is_general_highlight and poi.area in shopping_areas
             )
     assert any(poi.is_general_highlight and poi.id not in shopping_ids for poi in used_pois)
+
+
+@pytest.mark.asyncio
+async def test_planner_data_updated_at_includes_offline_database_date(request_factory) -> None:
+    request = request_factory(start_date="2026-10-02", end_date="2026-10-02")
+    planner = make_planner()
+
+    plan = await planner.generate(request)
+
+    assert plan.data_updated_at >= date(2026, 8, 5)
+
+
+@pytest.mark.asyncio
+async def test_planner_keeps_combined_candidate_order_after_gap_fill(request_factory) -> None:
+    request = request_factory(
+        start_date="2026-10-02",
+        end_date="2026-10-11",
+        interests=["shopping"],
+    )
+    repository = offline_repository()
+    planner = make_planner()
+
+    plan = await planner.generate(request)
+
+    pois_by_name = {poi.name: poi for poi in repository.list_pois([])}
+    day = plan.days[0]
+    pois = [pois_by_name[activity.name] for activity in day.activities]
+    assert len({poi.area for poi in pois}) == 1
+    highlight_flags = [poi.is_general_highlight for poi in pois]
+    assert highlight_flags == sorted(highlight_flags)
+    grouped_names: dict[bool, list[str]] = {False: [], True: []}
+    for poi in pois:
+        grouped_names[poi.is_general_highlight].append(poi.name)
+    for names in grouped_names.values():
+        assert names == sorted(names)

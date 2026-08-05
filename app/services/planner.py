@@ -66,6 +66,7 @@ class Planner:
         reference_dates = [
             record.observed_at for record in self._repository.load_reference_prices()
         ]
+        offline_metadata = self._offline_repository.get_metadata()
         return TripPlan(
             request=request,
             transport_options=transport_options,
@@ -74,16 +75,16 @@ class Planner:
             budget=budget,
             days=days,
             source_ids=source_ids,
-            data_updated_at=max(reference_dates),
+            data_updated_at=max([*reference_dates, offline_metadata.generated_at.date()]),
         )
 
     def _matching_pois(self, request: TripRequest) -> list[OfflinePoi]:
         matches = self._offline_repository.list_pois(request.interests)
         if not matches:
             raise ValueError("没有符合所选兴趣的上海候选地点")
-        matches.sort(key=lambda poi: (poi.area, poi.is_general_highlight, poi.name))
         if len(matches) < request.trip_days:
             matches.extend(self._same_area_general_highlights(matches))
+        matches.sort(key=lambda poi: (poi.area, poi.is_general_highlight, poi.name))
         return matches
 
     def _same_area_general_highlights(self, selected: list[OfflinePoi]) -> list[OfflinePoi]:

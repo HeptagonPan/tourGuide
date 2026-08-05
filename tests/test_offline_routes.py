@@ -1,8 +1,16 @@
+import re
 from datetime import date
+from pathlib import Path
 from typing import Literal
 
+from app.repositories.offline import OfflineRepository
 from app.schemas.offline import OfflineRouteEdge
 from app.services.offline_routes import OfflineRouteService
+
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+DATABASE_PATH = PROJECT_ROOT / "data/offline/shanghai.db"
+
+DIRECTIONAL_BOARDING_PATTERN = re.compile(r"(?:乘|乘坐).*?(?:至|前往)")
 
 
 class FakeOfflineRepository:
@@ -204,3 +212,33 @@ def test_find_route_does_not_traverse_one_way_edge_in_reverse() -> None:
 
     assert service.find_route("a", "b") is not None
     assert service.find_route("b", "a") is None
+
+
+def test_reversed_route_instructions_do_not_misstate_direction() -> None:
+    service = OfflineRouteService(OfflineRepository(DATABASE_PATH))
+
+    to_bund = service.find_route("oriental-pearl-tower", "the-bund")
+    from_bund = service.find_route("the-bund", "oriental-pearl-tower")
+
+    assert to_bund is not None
+    assert from_bund is not None
+    assert to_bund.instructions == from_bund.instructions
+    assert to_bund.instructions == ["地铁2号线连接南京东路站与陆家嘴站"]
+
+
+def test_bidirectional_route_summaries_are_direction_neutral() -> None:
+    repository = OfflineRepository(DATABASE_PATH)
+    service = OfflineRouteService(repository)
+
+    for edge in repository.list_route_edges():
+        if not edge.is_bidirectional:
+            continue
+        assert not DIRECTIONAL_BOARDING_PATTERN.search(edge.summary)
+        assert "前往" not in edge.summary
+        assert not re.search(r"经.*?(?:至|前往)", edge.summary)
+        reverse = service.find_route(edge.destination_poi_id, edge.origin_poi_id)
+        assert reverse is not None
+        for instruction in reverse.instructions:
+            assert not DIRECTIONAL_BOARDING_PATTERN.search(instruction)
+            assert "前往" not in instruction
+            assert not re.search(r"经.*?(?:至|前往)", instruction)

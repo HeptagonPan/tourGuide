@@ -251,7 +251,7 @@ class ItineraryActivity(BaseModel):
 
 
 class ItineraryRoute(BaseModel):
-    """相邻活动之间的高德路线摘要。"""
+    """相邻活动之间的实用级路线摘要。"""
 
     origin_name: str
     destination_name: str
