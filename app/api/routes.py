@@ -6,6 +6,7 @@ from fastapi.responses import Response
 from fastapi.templating import Jinja2Templates
 
 from app.config import Settings
+from app.repositories.offline import OfflineRepository
 from app.repositories.presets import PresetRepository
 from app.schemas.trip import (
     IntercityPreference,
@@ -13,9 +14,9 @@ from app.schemas.trip import (
     TripPlan,
     TripRequest,
 )
-from app.services.amap import AmapClient
 from app.services.exporter import HtmlExporter
 from app.services.narrator import Narrator
+from app.services.offline_routes import OfflineRouteService
 from app.services.planner import Planner
 
 
@@ -77,16 +78,16 @@ def register_routes(
 
     @router.post("/api/plans", response_model=TripPlan)
     async def create_plan(request: TripRequest) -> TripPlan:
-        amap_client: AmapClient | None = None
         local_narrator: Narrator | None = None
         try:
             active_planner = planner
             if active_planner is None:
-                settings = Settings()
-                amap_client = AmapClient(web_key=settings.amap_web_key)
+                offline_repository = OfflineRepository(Settings().data_dir / "offline/shanghai.db")
+                route_service = OfflineRouteService(offline_repository)
                 active_planner = Planner(
                     repository=preset_repository,
-                    amap_client=amap_client,
+                    offline_repository=offline_repository,
+                    route_service=route_service,
                 )
             plan = await active_planner.generate(request)
 
@@ -102,8 +103,6 @@ def register_routes(
                 detail="规划服务暂时不可用，请稍后重试",
             ) from exc
         finally:
-            if amap_client is not None:
-                await amap_client.aclose()
             if local_narrator is not None:
                 await local_narrator.aclose()
 
