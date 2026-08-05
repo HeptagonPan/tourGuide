@@ -1,6 +1,7 @@
 import httpx
 from fastapi.testclient import TestClient
 
+from app.config import Settings
 from app.main import create_app
 
 _real_async_client = httpx.AsyncClient
@@ -31,6 +32,10 @@ def test_full_offline_flow_works_without_external_network(
     """无高德密钥且禁止外部网络时，默认离线流程仍完成规划、页面与导出。"""
     monkeypatch.delenv("AMAP_WEB_KEY", raising=False)
     monkeypatch.delenv("AMAP_JS_KEY", raising=False)
+    monkeypatch.setenv("AMAP_WEB_KEY", "")
+    monkeypatch.setenv("AMAP_JS_KEY", "")
+    assert Settings().amap_web_key == ""
+    assert Settings().amap_js_key == ""
     monkeypatch.setattr(httpx, "AsyncClient", guarded_async_client)
 
     client = TestClient(create_app())
